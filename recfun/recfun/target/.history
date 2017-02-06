@@ -1,0 +1,10 @@
+compile
+test
+test PascalSuite
+compile
+test
+compile 
+test 
+compile 
+test 
+run 

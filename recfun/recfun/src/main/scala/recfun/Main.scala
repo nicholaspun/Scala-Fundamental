@@ -13,15 +13,34 @@ object Main {
   /**
    * Exercise 1
    */
-    def pascal(c: Int, r: Int): Int = ???
+    def pascal(c: Int, r: Int): Int = {
+      if (c > r + 1 || c < 0 || r < 0) return -1 // Error checking
+
+      // Main logic:
+      if (c == 0 || c == r) 1 else pascal(c, r-1) + pascal(c-1,r-1)
+    }
   
   /**
    * Exercise 2
    */
-    def balance(chars: List[Char]): Boolean = ???
+    def balance(chars: List[Char]): Boolean = {
+      balance_acc(chars, 0)
+    }
+
+    def balance_acc(chars: List[Char], count: Int): Boolean = {
+      if (count < 0) return false // More ')' than '(' or started with ')'
+      if (chars.isEmpty) return count == 0 // Base Case
+
+      // '(' increments count and ')' decrements count
+      if (chars.head == '(') balance_acc(chars.tail, count + 1)
+      else if (chars.head == ')') balance_acc(chars.tail, count - 1)
+      else balance_acc(chars.tail, count)
+    }
   
   /**
    * Exercise 3
    */
-    def countChange(money: Int, coins: List[Int]): Int = ???
+    def countChange(money: Int, coins: List[Int]): Int = {
+      0
+    }
   }
