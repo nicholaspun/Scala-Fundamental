@@ -8,3 +8,13 @@ test
 compile 
 test 
 run 
+testOnly *MySuite -t BalanceSuite
+testOnly BalanceSuite -t
+test:test-only BalanceSuite 
+test-only BalanceSuite.scala
+testOnly BalanceSuite
+testOnly BalanceSuite.scala
+testOnly Count
+compile 
+test 
+submit nicholaspun99@gmail.com HmVS97ErLDB6LZuZ
