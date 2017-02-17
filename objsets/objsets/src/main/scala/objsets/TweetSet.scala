@@ -2,44 +2,25 @@ package objsets
 
 import TweetReader._
 
-/**
- * A class to represent tweets.
- */
+// A class to represent tweets.
 class Tweet(val user: String, val text: String, val retweets: Int) {
   override def toString: String =
     "User: " + user + "\n" +
     "Text: " + text + " [" + retweets + "]"
 }
 
-/**
- * This represents a set of objects of type `Tweet` in the form of a binary search
- * tree. Every branch in the tree has two children (two `TweetSet`s). There is an
- * invariant which always holds: for every branch `b`, all elements in the left
- * subtree are smaller than the tweet at `b`. The elements in the right subtree are
- * larger.
- *
- * Note that the above structure requires us to be able to compare two tweets (we
- * need to be able to say which of two tweets is larger, or if they are equal). In
- * this implementation, the equality / order of tweets is based on the tweet's text
- * (see `def incl`). Hence, a `TweetSet` could not contain two tweets with the same
- * text from different users.
- *
- *
- * The advantage of representing sets as binary search trees is that the elements
- * of the set can be found quickly. If you want to learn more you can take a look
- * at the Wikipedia page [1], but this is not necessary in order to solve this
- * assignment.
- *
- * [1] http://en.wikipedia.org/wiki/Binary_search_tree
- */
+/** Set of "Tweets" as BST. There is an invariant which always holds: for every branch `b`,
+  * all elements in the left subtree are smaller than the tweet at `b`. The elements in the right subtree are
+  * larger. In this implementation, the equality / order of tweets is based on the tweet's text
+  * (see `def incl`). Hence, a `TweetSet` could not contain two tweets with the same
+  * text from different users.
+  */
 abstract class TweetSet {
 
+    def isEmpty: Boolean
   /**
    * This method takes a predicate and returns a subset of all the elements
    * in the original set for which the predicate is true.
-   *
-   * Question: Can we implement this method here, or should it remain abstract
-   * and be implemented in the subclasses?
    */
     def filter(p: Tweet => Boolean): TweetSet = filterAcc(p, new Empty)
 
@@ -50,20 +31,14 @@ abstract class TweetSet {
 
   /**
    * Returns a new `TweetSet` that is the union of `TweetSet`s `this` and `that`.
-   *
-   * Question: Should we implement this method here, or should it remain abstract
-   * and be implemented in the subclasses?
    */
     def union(that: TweetSet): TweetSet
   
   /**
    * Returns the tweet from this set which has the greatest retweet count.
    *
-   * Calling `mostRetweeted` on an empty set should throw an exception of
+   * Calling `mostRetweeted` on an empty set will throw an exception of
    * type `java.util.NoSuchElementException`.
-   *
-   * Question: Should we implement this method here, or should it remain abstract
-   * and be implemented in the subclasses?
    */
     def mostRetweeted: Tweet
 
@@ -76,8 +51,12 @@ abstract class TweetSet {
    * Question: Should we implement this method here, or should it remain abstract
    * and be implemented in the subclasses?
    */
-    def descendingByRetweet: TweetList
-  
+    def descendingByRetweet: TweetList = {
+      if(isEmpty) Nil
+      else new Cons(this.mostRetweeted, this.remove(this.mostRetweeted).descendingByRetweet)
+    }
+
+
   /**
    * The following methods are already implemented
    */
@@ -108,17 +87,15 @@ abstract class TweetSet {
 
 class Empty extends TweetSet {
 
+    def isEmpty: Boolean = true
+
     def filterAcc(p: Tweet => Boolean, acc: TweetSet): TweetSet = acc
 
     def union(that: TweetSet): TweetSet = that
 
     def mostRetweeted: Tweet = throw new java.util.NoSuchElementException("Empty.mostRetweeted")
 
-    def descendingByRetweet: TweetList = new Empty
-  /**
-   * The following methods are already implemented
-   */
-
+    // PreImplemented ----------------------------------
     def contains(tweet: Tweet): Boolean = false
 
     def incl(tweet: Tweet): TweetSet = new NonEmpty(tweet, new Empty, new Empty)
@@ -130,6 +107,8 @@ class Empty extends TweetSet {
 
 class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
 
+    def isEmpty: Boolean = false
+
     def filterAcc(p: Tweet => Boolean, acc: TweetSet): TweetSet = {
       if (p(elem)) left.filterAcc(p, acc incl elem) union right.filterAcc(p, acc)
       else left.filterAcc(p, acc) union right.filterAcc(p, acc)
@@ -137,14 +116,18 @@ class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
 
     def union(that: TweetSet): TweetSet = ((left union right) union that) incl elem
 
-    def mostRetweeted: Tweet = ???
+    def mostRetweeted: Tweet = {
+      // returns the Tweet containing more retweets
+      def maxTweet(t1: Tweet, t2: Tweet):Tweet = if (t1.retweets > t2.retweets) t1 else t2
 
-    def descendingByRetweet: TweetList = ???
+      // main function logic
+      if (right.isEmpty && left.isEmpty) elem // Only Node
+      else if (right.isEmpty) maxTweet(left.mostRetweeted, elem) // Recurse left subtree
+      else if (left.isEmpty) maxTweet(right.mostRetweeted, elem) // Recurse right subtree
+      else maxTweet(left.mostRetweeted, maxTweet(right.mostRetweeted, elem))
+    }
 
-  /**
-   * The following methods are already implemented
-   */
-
+    // PreImplemented ----------------------------------
     def contains(x: Tweet): Boolean =
       if (x.text < elem.text) left.contains(x)
       else if (elem.text < x.text) right.contains(x)
@@ -194,14 +177,14 @@ object GoogleVsApple {
     val google = List("android", "Android", "galaxy", "Galaxy", "nexus", "Nexus")
     val apple = List("ios", "iOS", "iphone", "iPhone", "ipad", "iPad")
 
-    lazy val googleTweets: TweetSet = ???
-    lazy val appleTweets: TweetSet = ???
+    lazy val googleTweets: TweetSet = allTweets.filter(t => google.exists(ele => t.text.contains(ele)))
+    lazy val appleTweets: TweetSet = allTweets.filter(t => apple.exists(ele => t.text.contains(ele)))
   
   /**
    * A list of all tweets mentioning a keyword from either apple or google,
    * sorted by the number of retweets.
    */
-    lazy val trending: TweetList = ???
+    lazy val trending: TweetList = (googleTweets union appleTweets).descendingByRetweet
   }
 
 object Main extends App {

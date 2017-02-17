@@ -1,0 +1,5 @@
+scala test 
+scala
+sbt test 
+test 
+exit
