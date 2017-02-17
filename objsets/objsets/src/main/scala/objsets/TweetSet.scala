@@ -32,7 +32,7 @@ abstract class TweetSet {
   /**
    * Returns a new `TweetSet` that is the union of `TweetSet`s `this` and `that`.
    */
-    def union(that: TweetSet): TweetSet
+    def union(that: TweetSet): TweetSet = that.filterAcc(t => true, this)
   
   /**
    * Returns the tweet from this set which has the greatest retweet count.
@@ -91,8 +91,6 @@ class Empty extends TweetSet {
 
     def filterAcc(p: Tweet => Boolean, acc: TweetSet): TweetSet = acc
 
-    def union(that: TweetSet): TweetSet = that
-
     def mostRetweeted: Tweet = throw new java.util.NoSuchElementException("Empty.mostRetweeted")
 
     // PreImplemented ----------------------------------
@@ -110,11 +108,9 @@ class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
     def isEmpty: Boolean = false
 
     def filterAcc(p: Tweet => Boolean, acc: TweetSet): TweetSet = {
-      if (p(elem)) left.filterAcc(p, acc incl elem) union right.filterAcc(p, acc)
-      else left.filterAcc(p, acc) union right.filterAcc(p, acc)
+      if (p(elem)) left.filterAcc(p, right.filterAcc(p, acc incl elem))
+      else left.filterAcc(p, right.filterAcc(p, acc))
     }
-
-    def union(that: TweetSet): TweetSet = ((left union right) union that) incl elem
 
     def mostRetweeted: Tweet = {
       // returns the Tweet containing more retweets
