@@ -2,6 +2,10 @@ package patmat
 
 import common._
 
+/**
+ * Assignment 4: Huffman coding
+ *
+ */
 object Huffman {
 
   /**
@@ -14,22 +18,22 @@ object Huffman {
    * present in the leaves below it. The weight of a `Fork` node is the sum of the weights of these
    * leaves.
    */
-  abstract class CodeTree
+    abstract class CodeTree
   case class Fork(left: CodeTree, right: CodeTree, chars: List[Char], weight: Int) extends CodeTree
   case class Leaf(char: Char, weight: Int) extends CodeTree
-  
+
 
   // Part 1: Basics
   def weight(tree: CodeTree): Int = tree match {
     case Leaf(_, w) => w
     case Fork(_, _, _, w) => w
   }
-  
+
   def chars(tree: CodeTree): List[Char] = tree match {
     case Leaf(c, _) => List(c)
     case Fork(_, _, chars, _) => chars
   }
-  
+
   def makeCodeTree(left: CodeTree, right: CodeTree): Fork =
     Fork(left, right, chars(left) ::: chars(right), weight(left) + weight(right))
 
@@ -38,52 +42,53 @@ object Huffman {
   // Part 2: Generating Huffman trees
 
   /**
-   * In this assignment, we are working with lists of characters. This function allows
-   * you to easily create a character list from a given string.
-   */
+    * In this assignment, we are working with lists of characters. This function allows
+    * you to easily create a character list from a given string.
+    */
   def string2Chars(str: String): List[Char] = str.toList
 
   /**
-   * This function computes for each unique character in the list `chars` the number of
-   * times it occurs. For example, the invocation
-   *
-   *   times(List('a', 'b', 'a'))
-   *
-   * should return the following (the order of the resulting list is not important):
-   *
-   *   List(('a', 2), ('b', 1))
-   *
-   * The type `List[(Char, Int)]` denotes a list of pairs, where each pair consists of a
-   * character and an integer. Pairs can be constructed easily using parentheses:
-   *
-   *   val pair: (Char, Int) = ('c', 1)
-   *
-   * In order to access the two elements of a pair, you can use the accessors `_1` and `_2`:
-   *
-   *   val theChar = pair._1
-   *   val theInt  = pair._2
-   *
-   * Another way to deconstruct a pair is using pattern matching:
-   *
-   *   pair match {
-   *     case (theChar, theInt) =>
-   *       println("character is: "+ theChar)
-   *       println("integer is  : "+ theInt)
-   *   }
-   */
-    def times(chars: List[Char]): List[(Char, Int)] = timesAcc(chars, List())
+    * This function computes for each unique character in the list `chars` the number of
+    * times it occurs. For example, the invocation
+    *
+    *   times(List('a', 'b', 'a'))
+    *
+    * should return the following (the order of the resulting list is not important):
+    *
+    *   List(('a', 2), ('b', 1))
+    *
+    * The type `List[(Char, Int)]` denotes a list of pairs, where each pair consists of a
+    * character and an integer. Pairs can be constructed easily using parentheses:
+    *
+    *   val pair: (Char, Int) = ('c', 1)
+    *
+    * In order to access the two elements of a pair, you can use the accessors `_1` and `_2`:
+    *
+    *   val theChar = pair._1
+    *   val theInt  = pair._2
+    *
+    * Another way to deconstruct a pair is using pattern matching:
+    *
+    *   pair match {
+    *     case (theChar, theInt) =>
+    *       println("character is: "+ theChar)
+    *       println("integer is  : "+ theInt)
+    *   }
+    */
+  def times(chars: List[Char]): List[(Char, Int)] = timesAcc(chars, List())
 
-    def timesAcc(chars: List[Char], pairs: List[(Char, Int)]): List[(Char, Int)] = {
-      if (chars.isEmpty) pairs
-      else timesAcc(chars.tail, insertToPairs(chars.head, List()))
-    }
+  def timesAcc(chars: List[Char], pairs: List[(Char, Int)]): List[(Char, Int)] = {
+    if (chars.isEmpty) pairs
+    else timesAcc(chars.tail, insertToPairs(chars.head, List()))
+  }
 
-    def insertToPairs(char: Char, pairs: List[(Char, Int)]): List[(Char, Int)] = {
-      if (pairs.isEmpty) List((char, 1))
-      else if (char == pairs.head._1) (pairs.head._1, pairs.head._2 + 1) :: pairs.tail
-      else pairs.head :: insertToPairs(char, pairs.tail)
-    }
-  
+  def insertToPairs(char: Char, pairs: List[(Char, Int)]): List[(Char, Int)] = {
+    if (pairs.isEmpty) List((char, 1))
+    else if (char == pairs.head._1) (pairs.head._1, pairs.head._2 + 1) :: pairs.tail
+    else pairs.head :: insertToPairs(char, pairs.tail)
+  }
+
+
   /**
    * Returns a list of `Leaf` nodes for a given frequency table `freqs`.
    *
@@ -92,12 +97,12 @@ object Huffman {
    * of a leaf is the frequency of the character.
    */
     def makeOrderedLeafList(freqs: List[(Char, Int)]): List[Leaf] = ???
-  
+
   /**
    * Checks whether the list `trees` contains only one single code tree.
    */
     def singleton(trees: List[CodeTree]): Boolean = ???
-  
+
   /**
    * The parameter `trees` of this function is a list of code trees ordered
    * by ascending weights.
@@ -111,7 +116,7 @@ object Huffman {
    * unchanged.
    */
     def combine(trees: List[CodeTree]): List[CodeTree] = ???
-  
+
   /**
    * This function will be called in the following way:
    *
@@ -130,7 +135,7 @@ object Huffman {
    *  - try to find sensible parameter names for `xxx`, `yyy` and `zzz`.
    */
     def until(xxx: ???, yyy: ???)(zzz: ???): ??? = ???
-  
+
   /**
    * This function creates a code tree which is optimal to encode the text `chars`.
    *
@@ -138,7 +143,7 @@ object Huffman {
    * frequencies from that text and creates a code tree based on them.
    */
     def createCodeTree(chars: List[Char]): CodeTree = ???
-  
+
 
   // Part 3: Decoding
 
@@ -149,7 +154,7 @@ object Huffman {
    * the resulting list of characters.
    */
     def decode(tree: CodeTree, bits: List[Bit]): List[Char] = ???
-  
+
   /**
    * A Huffman coding tree for the French language.
    * Generated from the data given at
@@ -167,7 +172,7 @@ object Huffman {
    * Write a function that returns the decoded secret
    */
     def decodedSecret: List[Char] = ???
-  
+
 
   // Part 4a: Encoding using Huffman tree
 
@@ -176,7 +181,7 @@ object Huffman {
    * into a sequence of bits.
    */
     def encode(tree: CodeTree)(text: List[Char]): List[Bit] = ???
-  
+
   // Part 4b: Encoding using code table
 
   type CodeTable = List[(Char, List[Bit])]
@@ -186,7 +191,7 @@ object Huffman {
    * the code table `table`.
    */
     def codeBits(table: CodeTable)(char: Char): List[Bit] = ???
-  
+
   /**
    * Given a code tree, create a code table which contains, for every character in the
    * code tree, the sequence of bits representing that character.
@@ -196,14 +201,14 @@ object Huffman {
    * sub-trees, think of how to build the code table for the entire tree.
    */
     def convert(tree: CodeTree): CodeTable = ???
-  
+
   /**
    * This function takes two code tables and merges them into one. Depending on how you
    * use it in the `convert` method above, this merge method might also do some transformations
    * on the two parameter code tables.
    */
     def mergeCodeTables(a: CodeTable, b: CodeTable): CodeTable = ???
-  
+
   /**
    * This function encodes `text` according to the code tree `tree`.
    *
