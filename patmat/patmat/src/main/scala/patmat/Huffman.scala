@@ -18,7 +18,7 @@ object Huffman {
    * present in the leaves below it. The weight of a `Fork` node is the sum of the weights of these
    * leaves.
    */
-    abstract class CodeTree
+  abstract class CodeTree
   case class Fork(left: CodeTree, right: CodeTree, chars: List[Char], weight: Int) extends CodeTree
   case class Leaf(char: Char, weight: Int) extends CodeTree
 
@@ -79,7 +79,7 @@ object Huffman {
 
   def timesAcc(chars: List[Char], pairs: List[(Char, Int)]): List[(Char, Int)] = {
     if (chars.isEmpty) pairs
-    else timesAcc(chars.tail, insertToPairs(chars.head, List()))
+    else timesAcc(chars.tail, insertToPairs(chars.head, pairs))
   }
 
   def insertToPairs(char: Char, pairs: List[(Char, Int)]): List[(Char, Int)] = {
@@ -98,6 +98,10 @@ object Huffman {
    */
     def makeOrderedLeafList(freqs: List[(Char, Int)]): List[Leaf] = ???
 
+    def maxPair(pairs: List[(Char, Int)]): (Char, Int) = pairs match {
+      case Nil => None
+      case   
+    }
   /**
    * Checks whether the list `trees` contains only one single code tree.
    */

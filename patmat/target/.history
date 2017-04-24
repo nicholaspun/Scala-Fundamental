@@ -1,0 +1,9 @@
+test
+exit
+testONly patmat.Part2Suite
+testOnly patmat.Part2Suite
+test testOnly patmat.Part2Suite
+testOnly Part2Suite
+testPart2Suite
+test
+exit

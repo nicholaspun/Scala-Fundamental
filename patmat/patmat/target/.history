@@ -1,0 +1,3 @@
+testOnly patmat.FooSuite
+exit
+testOnly patmat.Part2Suite

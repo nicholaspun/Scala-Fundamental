@@ -50,5 +50,22 @@ class HuffmanSuite extends FunSuite {
       assert(decode(t1, encode(t1)("ab".toList)) === "ab".toList)
     }
   }
+}
 
+class Part1Suite extends FunSuite {
+  test("weight of leaf") {
+    assert(weight(Leaf('c', 1)) === 1)
+  }
+
+  test("weight of fork") {
+    assert(weight(Fork(Leaf('c', 1), Leaf('d', 1), List('d', 'c'), 2)) === 2)
+  }
+
+  // Not finished, Come back and finish these off!!
+}
+
+class Part2Suite extends FunSuite {
+  test("times ftn") {
+   assert(times(List('a', 'b', 'c', 'a')) === List(('a', 2), ('b', 1), ('c', 1)))
+  }
 }
