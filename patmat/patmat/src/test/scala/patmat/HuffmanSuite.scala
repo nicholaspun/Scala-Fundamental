@@ -68,4 +68,9 @@ class Part2Suite extends FunSuite {
   test("times ftn") {
    assert(times(List('a', 'b', 'c', 'a')) === List(('a', 2), ('b', 1), ('c', 1)))
   }
+
+  test("makeOrderedLeafList ftn") {
+    assert(makeOrderedLeafList(List(('a', 2), ('b', 1), ('c', 1))) === List(Leaf('c', 1), Leaf('b', 1), Leaf('a', 2)))
+  }
 }
+
